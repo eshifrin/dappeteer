@@ -11,6 +11,7 @@ export { getMetamask };
 export type LaunchOptions = Parameters<typeof puppeteer['launch']>[0] & {
   metamaskVersion: 'v10.1.1' | 'latest' | string;
   metamaskLocation?: Path;
+  existingMetamask?: Path;
 };
 
 export type MetamaskOptions = {
@@ -84,7 +85,8 @@ export async function launch(puppeteerLib: typeof puppeteer, options: LaunchOpti
   /* eslint-enable no-console */
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const METAMASK_PATH = await downloader(metamaskVersion, metamaskLocation);
+
+  const METAMASK_PATH = options.existingMetamask || (await downloader(metamaskVersion, metamaskLocation));
 
   return puppeteerLib.launch({
     headless: false,
