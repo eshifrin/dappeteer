@@ -12,6 +12,7 @@ export type LaunchOptions = Parameters<typeof puppeteer['launch']>[0] & {
   metamaskVersion: 'v10.1.1' | 'latest' | string;
   metamaskLocation?: Path;
   existingMetamask?: Path;
+  wssPath?: string;
 };
 
 export type MetamaskOptions = {
@@ -87,6 +88,12 @@ export async function launch(puppeteerLib: typeof puppeteer, options: LaunchOpti
   // eslint-disable-next-line @typescript-eslint/naming-convention
 
   const METAMASK_PATH = options.existingMetamask || (await downloader(metamaskVersion, metamaskLocation));
+
+  if (options.wssPath) {
+    return puppeteerLib.connect({
+      browserWSEndpoint: `${options.wssPath}&--disable-extensions-except=${METAMASK_PATH}&--load-extension=${METAMASK_PATH}&headless=false`,
+    });
+  }
 
   return puppeteerLib.launch({
     headless: false,
