@@ -53,6 +53,11 @@ function launch(puppeteerLib, options) {
         /* eslint-enable no-console */
         // eslint-disable-next-line @typescript-eslint/naming-convention
         const METAMASK_PATH = options.existingMetamask || (yield metamaskDownloader_1.default(metamaskVersion, metamaskLocation));
+        if (options.wssPath) {
+            return puppeteerLib.connect({
+                browserWSEndpoint: `${options.wssPath}&--disable-extensions-except=${METAMASK_PATH}&--load-extension=${METAMASK_PATH}&headless=false`,
+            });
+        }
         return puppeteerLib.launch(Object.assign({ headless: false, args: [`--disable-extensions-except=${METAMASK_PATH}`, `--load-extension=${METAMASK_PATH}`, ...(args || [])] }, rest));
     });
 }
